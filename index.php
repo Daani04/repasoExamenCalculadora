@@ -29,7 +29,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <label for="b">Número B:</label>
         <input type="number" id="b" name="b" required>
         <br>
-        <button type="submit">Sumar</button>
+        <button type="submit">Sumarr</button>
     </form>
 
     <?php if ($resultado !== null): ?>
