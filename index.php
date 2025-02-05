@@ -3,13 +3,39 @@ require 'vendor/autoload.php';
 use App\Calculadora;
 
 $resultado = null;
+$mensajeError = null; // Variable para manejar errores
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $a = $_POST['a'] ?? 0;
     $b = $_POST['b'] ?? 0;
+    $operacion = $_POST['operacion'] ?? 'suma'; // Obtenemos la operación seleccionada
 
     $calc = new Calculadora();
-    $resultado = $calc->suma($a, $b);
+
+    try {
+        // Dependiendo de la operación seleccionada, realizamos el cálculo correspondiente
+        switch ($operacion) {
+            case 'suma':
+                $resultado = $calc->suma($a, $b);
+                break;
+            case 'resta':
+                $resultado = $calc->resta($a, $b);
+                break;
+            case 'multiplicacion':
+                $resultado = $calc->multiplicacion($a, $b);
+                break;
+            case 'division':
+                $resultado = $calc->division($a, $b);
+                break;
+            case 'raizCuadrada':
+                $resultado = $calc->raizCuadrada($a);
+                break;
+            default:
+                $mensajeError = "Operación no válida.";
+        }
+    } catch (\InvalidArgumentException $e) {
+        $mensajeError = $e->getMessage(); // Capturamos el mensaje de error si ocurre
+    }
 }
 ?>
 
@@ -27,12 +53,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         <input type="number" id="a" name="a" required>
         <br>
         <label for="b">Número B:</label>
-        <input type="number" id="b" name="b" required>
+        <input type="number" id="b" name="b">
         <br>
-        <button type="submit">Sumarr</button>
+        <label for="operacion">Selecciona operación:</label>
+        <select id="operacion" name="operacion" required>
+            <option value="suma">Suma</option>
+            <option value="resta">Resta</option>
+            <option value="multiplicacion">Multiplicación</option>
+            <option value="division">División</option>
+            <option value="raizCuadrada">Raíz Cuadrada</option>
+        </select>
+        <br>
+        <button type="submit">Calcular</button>
     </form>
 
-    <?php if ($resultado !== null): ?>
+    <?php if ($mensajeError): ?>
+        <h2 style="color: red;">Error: <?php echo $mensajeError; ?></h2>
+    <?php elseif ($resultado !== null): ?>
         <h2>Resultado: <?php echo $resultado; ?></h2>
     <?php endif; ?>
 </body>
